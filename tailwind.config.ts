@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -25,8 +26,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#1A3C74',
+					foreground: '#FFFFFF'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -61,12 +62,32 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom news platform colors
+				'news-blue': '#1A3C74',
+				'news-orange': '#FF8C42',
+				'news-charcoal': '#333333',
+				'news-gray': '#F5F6F8'
+			},
+			fontFamily: {
+				'heading': ['Poppins', 'sans-serif'],
+				'body': ['Open Sans', 'sans-serif'],
+				'serif': ['Merriweather', 'serif']
+			},
+			fontSize: {
+				'headline': '32px',
+				'subheading': '20px',
+				'body': '16px'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'news': '12px'
+			},
+			boxShadow: {
+				'news': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+				'news-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -84,11 +105,22 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out'
 			}
 		}
 	},
