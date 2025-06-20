@@ -16,6 +16,9 @@ import Signin from "./pages/Signin";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
+import ClaimSubmission from "./pages/ClaimSubmission";
+import FactCheckDashboard from "./pages/FactCheckDashboard";
+import FactCheckReport from "./pages/FactCheckReport";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,9 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/claim-submission" element={<ClaimSubmission />} />
+          <Route path="/fact-check-dashboard" element={<FactCheckDashboard />} />
+          <Route path="/fact-check-report/:id" element={<FactCheckReport />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

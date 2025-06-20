@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { CheckCircle, XCircle, AlertTriangle, Search } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Search, Plus, BarChart3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const factCheckItems = [
   {
@@ -79,6 +79,37 @@ const FactCheck = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Fact Check Center</h1>
           <p className="text-xl text-gray-600">Verifying claims and fighting misinformation in our community</p>
+        </div>
+
+        {/* Action Cards */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <Link to="/claim-submission">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Plus className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Submit a Claim</h3>
+                  <p className="text-gray-600">Have a claim that needs verification? Submit it here.</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/fact-check-dashboard">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Editorial Dashboard</h3>
+                  <p className="text-gray-600">Manage and review submitted claims.</p>
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
 
         <div className="bg-white rounded-lg p-6 shadow-sm mb-8">
