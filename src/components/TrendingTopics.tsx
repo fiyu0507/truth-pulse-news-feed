@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 const trendingTopics = [
   "Election Results",
-  "City Council",
+  "City Council", 
   "Transportation",
   "Housing Policy",
   "School Board",
@@ -13,7 +13,17 @@ const trendingTopics = [
   "Community Events"
 ];
 
-export const TrendingTopics = () => {
+interface TrendingTopicsProps {
+  onTopicClick?: (topic: string) => void;
+}
+
+export const TrendingTopics = ({ onTopicClick }: TrendingTopicsProps) => {
+  const handleTopicClick = (topic: string) => {
+    if (onTopicClick) {
+      onTopicClick(topic);
+    }
+  };
+
   return (
     <section className="bg-white border-b border-gray-200 py-6">
       <div className="max-w-7xl mx-auto px-4">
@@ -25,7 +35,8 @@ export const TrendingTopics = () => {
                 key={index}
                 variant="outline"
                 size="sm"
-                className="whitespace-nowrap border-gray-300 text-gray-700 hover:border-blue-800 hover:text-blue-800 rounded-full"
+                onClick={() => handleTopicClick(topic)}
+                className="whitespace-nowrap border-gray-300 text-gray-700 hover:border-blue-800 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors cursor-pointer"
               >
                 {topic}
               </Button>

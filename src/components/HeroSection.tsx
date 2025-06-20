@@ -25,10 +25,14 @@ export const HeroSection = () => {
               Preliminary results indicate highest voter participation in two decades, with key ballot measures passing by significant margins.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
+              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-medium">
                 Read Full Story
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-900">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-900 font-medium transition-all duration-200"
+              >
                 Watch Live Coverage
               </Button>
             </div>

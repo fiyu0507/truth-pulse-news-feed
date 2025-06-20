@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Clock, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface NewsCardProps {
+  id?: number;
   title: string;
   summary: string;
   imageUrl: string;
@@ -13,6 +15,7 @@ interface NewsCardProps {
 }
 
 export const NewsCard = ({ 
+  id = 1,
   title, 
   summary, 
   imageUrl, 
@@ -21,8 +24,17 @@ export const NewsCard = ({
   category,
   isFactChecked = false 
 }: NewsCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/news/${id}`);
+  };
+
   return (
-    <article className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+    <article 
+      className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="relative">
         <img 
           src={imageUrl} 
@@ -45,7 +57,7 @@ export const NewsCard = ({
       </div>
       
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-tight hover:text-blue-800 cursor-pointer">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-tight hover:text-blue-800 transition-colors">
           {title}
         </h3>
         <p className="text-gray-600 mb-4 line-clamp-3">
