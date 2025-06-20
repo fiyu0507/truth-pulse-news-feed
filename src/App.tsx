@@ -11,6 +11,11 @@ import FactCheck from "./pages/FactCheck";
 import SearchResults from "./pages/SearchResults";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
+import Signup from "./pages/Signup";
+import Signin from "./pages/Signin";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +32,11 @@ const App = () => (
           <Route path="/fact-check" element={<FactCheck />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/news/:id" element={<NewsDetail />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
