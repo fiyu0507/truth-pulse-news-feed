@@ -40,7 +40,7 @@ export const Navigation = () => {
             <Link to="/contact" className="text-gray-700 hover:text-blue-800 font-medium transition-colors">Contact</Link>
           </div>
 
-          {/* Search and Location */}
+          {/* Search, Location, and Auth */}
           <div className="hidden md:flex items-center space-x-4">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -55,6 +55,18 @@ export const Navigation = () => {
             <div className="flex items-center space-x-2 text-sm text-gray-600">
               <MapPin className="w-4 h-4" />
               <span>San Francisco, CA</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Link to="/signin">
+                <Button variant="ghost" className="text-gray-700 hover:text-blue-800">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="bg-blue-800 hover:bg-blue-900 text-white">
+                  Sign Up
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -93,6 +105,18 @@ export const Navigation = () => {
                 <Link to="/fact-check" className="text-gray-700 hover:text-blue-800 font-medium py-2" onClick={() => setIsMenuOpen(false)}>Fact Check</Link>
                 <Link to="/about" className="text-gray-700 hover:text-blue-800 font-medium py-2" onClick={() => setIsMenuOpen(false)}>About</Link>
                 <Link to="/contact" className="text-gray-700 hover:text-blue-800 font-medium py-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+              </div>
+              <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
+                <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-blue-800">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                  <Button className="w-full bg-blue-800 hover:bg-blue-900 text-white">
+                    Sign Up
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
