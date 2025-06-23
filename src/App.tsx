@@ -23,6 +23,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminSources from "./pages/AdminSources";
 import AdminUsers from "./pages/AdminUsers";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import Bookmarks from "./pages/Bookmarks";
+import ProfileSettings from "./pages/ProfileSettings";
+import UserSubmissions from "./pages/UserSubmissions";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +48,10 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/bookmarks" element={<Bookmarks />} />
+          <Route path="/profile-settings" element={<ProfileSettings />} />
+          <Route path="/user-submissions" element={<UserSubmissions />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/claim-submission" element={<ClaimSubmission />} />
           <Route path="/fact-check-dashboard" element={<FactCheckDashboard />} />
           <Route path="/fact-check-report/:id" element={<FactCheckReport />} />
