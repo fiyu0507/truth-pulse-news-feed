@@ -19,6 +19,10 @@ import Dashboard from "./pages/Dashboard";
 import ClaimSubmission from "./pages/ClaimSubmission";
 import FactCheckDashboard from "./pages/FactCheckDashboard";
 import FactCheckReport from "./pages/FactCheckReport";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminSources from "./pages/AdminSources";
+import AdminUsers from "./pages/AdminUsers";
+import AdminAnalytics from "./pages/AdminAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +47,10 @@ const App = () => (
           <Route path="/claim-submission" element={<ClaimSubmission />} />
           <Route path="/fact-check-dashboard" element={<FactCheckDashboard />} />
           <Route path="/fact-check-report/:id" element={<FactCheckReport />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/sources" element={<AdminSources />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
