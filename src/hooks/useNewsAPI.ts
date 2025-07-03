@@ -60,31 +60,31 @@ export const useNewsAPI = ({ category = 'general', country = 'us', pageSize = 10
     }
   ];
 
+  const fetchNews = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Filter by category if specified
+      const filteredArticles = category === 'general' 
+        ? mockArticles 
+        : mockArticles.filter(article => article.category === category);
+
+      setArticles(filteredArticles.slice(0, pageSize));
+    } catch (err) {
+      setError('Failed to fetch news articles');
+      console.error('News API Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchNews = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Filter by category if specified
-        const filteredArticles = category === 'general' 
-          ? mockArticles 
-          : mockArticles.filter(article => article.category === category);
-
-        setArticles(filteredArticles.slice(0, pageSize));
-      } catch (err) {
-        setError('Failed to fetch news articles');
-        console.error('News API Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchNews();
   }, [category, country, pageSize]);
 
-  return { articles, loading, error, refetch: () => fetchNews() };
+  return { articles, loading, error, refetch: fetchNews };
 };
