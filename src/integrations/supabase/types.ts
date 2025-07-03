@@ -33,18 +33,21 @@ export type Database = {
       bookmarks: {
         Row: {
           article_id: number
+          auth_user_id: string | null
           bookmark_id: number
           saved_at: string | null
           user_id: number
         }
         Insert: {
           article_id: number
+          auth_user_id?: string | null
           bookmark_id?: number
           saved_at?: string | null
           user_id: number
         }
         Update: {
           article_id?: number
+          auth_user_id?: string | null
           bookmark_id?: number
           saved_at?: string | null
           user_id?: number
@@ -233,6 +236,7 @@ export type Database = {
       }
       notifications: {
         Row: {
+          auth_user_id: string | null
           created_at: string | null
           is_read: boolean | null
           message: string
@@ -241,6 +245,7 @@ export type Database = {
           user_id: number
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string | null
           is_read?: boolean | null
           message: string
@@ -249,6 +254,7 @@ export type Database = {
           user_id: number
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string | null
           is_read?: boolean | null
           message?: string
@@ -265,6 +271,33 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          language: string | null
+          location: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          language?: string | null
+          location?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          language?: string | null
+          location?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       settings: {
         Row: {
@@ -290,6 +323,7 @@ export type Database = {
       submissions: {
         Row: {
           admin_comment: string | null
+          auth_user_id: string | null
           category_id: number | null
           description: string | null
           evidence_url: string | null
@@ -302,6 +336,7 @@ export type Database = {
         }
         Insert: {
           admin_comment?: string | null
+          auth_user_id?: string | null
           category_id?: number | null
           description?: string | null
           evidence_url?: string | null
@@ -314,6 +349,7 @@ export type Database = {
         }
         Update: {
           admin_comment?: string | null
+          auth_user_id?: string | null
           category_id?: number | null
           description?: string | null
           evidence_url?: string | null
@@ -340,6 +376,27 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
       }
       users: {
         Row: {
@@ -385,9 +442,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "reader" | "contributor" | "verifier" | "admin"
       fact_verdict: "true" | "false" | "misleading" | "mixed"
       notification_type: "article" | "fact_check" | "system"
       source_type: "local" | "international" | "gov"
@@ -509,6 +573,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["reader", "contributor", "verifier", "admin"],
       fact_verdict: ["true", "false", "misleading", "mixed"],
       notification_type: ["article", "fact_check", "system"],
       source_type: ["local", "international", "gov"],

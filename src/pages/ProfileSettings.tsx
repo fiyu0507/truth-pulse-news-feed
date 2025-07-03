@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,23 +10,25 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { User, MapPin, Bell, Shield, Globe, Save, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ProfileSettings = () => {
+  const { user, profile, updateProfile, updatePassword } = useAuth();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const { toast } = useToast();
 
   const [accountData, setAccountData] = useState({
-    fullName: 'John Doe',
-    email: 'john.doe@example.com',
+    fullName: '',
+    email: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
 
   const [locationData, setLocationData] = useState({
-    primaryLocation: 'San Francisco, CA',
-    additionalLocations: ['Oakland, CA', 'Berkeley, CA']
+    primaryLocation: '',
+    additionalLocations: ['', '']
   });
 
   const [notificationSettings, setNotificationSettings] = useState({
@@ -37,6 +39,20 @@ const ProfileSettings = () => {
     frequency: 'daily'
   });
 
+  useEffect(() => {
+    if (user && profile) {
+      setAccountData(prev => ({
+        ...prev,
+        fullName: profile.full_name || '',
+        email: user.email || ''
+      }));
+      setLocationData(prev => ({
+        ...prev,
+        primaryLocation: profile.location || ''
+      }));
+    }
+  }, [user, profile]);
+
   const categories = [
     { id: 'politics', name: 'Politics', enabled: true },
     { id: 'business', name: 'Business', enabled: true },
@@ -46,16 +62,75 @@ const ProfileSettings = () => {
     { id: 'technology', name: 'Technology', enabled: true }
   ];
 
-  const handleSaveAccount = () => {
+  const handleSaveAccount = async () => {
     console.log('Saving account data:', accountData);
+    
+    // Update profile
+    const { error: profileError } = await updateProfile({
+      full_name: accountData.fullName,
+    });
+
+    if (profileError) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Update password if provided
+    if (accountData.newPassword) {
+      if (accountData.newPassword !== accountData.confirmPassword) {
+        toast({
+          title: "Error",
+          description: "New passwords don't match.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error: passwordError } = await updatePassword(accountData.newPassword);
+      if (passwordError) {
+        toast({
+          title: "Error",
+          description: "Failed to update password.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     toast({
       title: "Account Updated",
       description: "Your account information has been saved successfully.",
     });
+
+    // Clear password fields
+    setAccountData(prev => ({
+      ...prev,
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    }));
   };
 
-  const handleSaveLocation = () => {
+  const handleSaveLocation = async () => {
     console.log('Saving location data:', locationData);
+    
+    const { error } = await updateProfile({
+      location: locationData.primaryLocation,
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update location preferences.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Location Preferences Updated",
       description: "Your location preferences have been saved.",
@@ -69,6 +144,20 @@ const ProfileSettings = () => {
       description: "Your notification preferences have been saved.",
     });
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Please sign in</h2>
+          <p className="text-gray-600 mb-6">You need to be signed in to access your profile settings.</p>
+          <Button asChild>
+            <Link to="/signin">Sign In</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -138,7 +227,8 @@ const ProfileSettings = () => {
                       <Input
                         type="email"
                         value={accountData.email}
-                        onChange={(e) => setAccountData({...accountData, email: e.target.value})}
+                        disabled
+                        className="bg-gray-100"
                       />
                     </div>
                   </div>
