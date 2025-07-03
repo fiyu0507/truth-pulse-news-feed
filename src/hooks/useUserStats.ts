@@ -21,7 +21,10 @@ export const useUserStats = () => {
 
   useEffect(() => {
     const fetchUserStats = async () => {
+      console.log('Fetching user stats for user:', user?.id);
+      
       if (!user) {
+        console.log('No user found, setting loading to false');
         setLoading(false);
         return;
       }
@@ -30,8 +33,8 @@ export const useUserStats = () => {
         setLoading(true);
         setError(null);
 
-        // Since we're using auth_user_id in the new schema, let's fetch the stats
-        const [bookmarksResponse, notificationsResponse, submissionsResponse] = await Promise.all([
+        // Fetch stats with proper error handling for each query
+        const [bookmarksResponse, notificationsResponse, submissionsResponse] = await Promise.allSettled([
           supabase
             .from('bookmarks')
             .select('*', { count: 'exact', head: true })
@@ -47,11 +50,29 @@ export const useUserStats = () => {
             .eq('auth_user_id', user.id)
         ]);
 
+        const bookmarksCount = bookmarksResponse.status === 'fulfilled' ? bookmarksResponse.value.count || 0 : 0;
+        const notificationsCount = notificationsResponse.status === 'fulfilled' ? notificationsResponse.value.count || 0 : 0;
+        const submissionsCount = submissionsResponse.status === 'fulfilled' ? submissionsResponse.value.count || 0 : 0;
+
+        console.log('Stats fetched:', { bookmarksCount, notificationsCount, submissionsCount });
+
         setStats({
-          bookmarksCount: bookmarksResponse.count || 0,
-          notificationsCount: notificationsResponse.count || 0,
-          submissionsCount: submissionsResponse.count || 0
+          bookmarksCount,
+          notificationsCount,
+          submissionsCount
         });
+
+        // Log any individual errors without failing the entire operation
+        if (bookmarksResponse.status === 'rejected') {
+          console.warn('Bookmarks query failed:', bookmarksResponse.reason);
+        }
+        if (notificationsResponse.status === 'rejected') {
+          console.warn('Notifications query failed:', notificationsResponse.reason);
+        }
+        if (submissionsResponse.status === 'rejected') {
+          console.warn('Submissions query failed:', submissionsResponse.reason);
+        }
+
       } catch (err) {
         console.error('Error fetching user stats:', err);
         setError('Failed to load user statistics');

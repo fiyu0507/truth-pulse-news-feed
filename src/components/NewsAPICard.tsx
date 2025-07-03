@@ -3,41 +3,16 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, ExternalLink, BookmarkPlus, Share2 } from 'lucide-react';
+import { Clock, ExternalLink } from 'lucide-react';
 import { NewsArticle } from '@/hooks/useNewsAPI';
-import { useBookmarks } from '@/hooks/useBookmarks';
+import { ShareButton } from './ShareButton';
+import { BookmarkButton } from './BookmarkButton';
 
 interface NewsAPICardProps {
   article: NewsArticle;
 }
 
 export const NewsAPICard = ({ article }: NewsAPICardProps) => {
-  const { addBookmark } = useBookmarks();
-
-  const handleBookmark = () => {
-    const articleId = parseInt(article.id);
-    addBookmark(articleId, {
-      title: article.title,
-      description: article.description,
-      url: article.url,
-      imageUrl: article.urlToImage,
-      source: article.source.name,
-      category: article.category || 'General'
-    });
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: article.title,
-        text: article.description,
-        url: article.url
-      });
-    } else {
-      navigator.clipboard.writeText(article.url);
-    }
-  };
-
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -46,6 +21,16 @@ export const NewsAPICard = ({ article }: NewsAPICardProps) => {
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return `${Math.floor(diffInHours / 24)}d ago`;
+  };
+
+  const articleId = parseInt(article.id);
+  const articleData = {
+    title: article.title,
+    description: article.description,
+    url: article.url,
+    imageUrl: article.urlToImage,
+    source: article.source.name,
+    category: article.category || 'General'
   };
 
   return (
@@ -98,20 +83,15 @@ export const NewsAPICard = ({ article }: NewsAPICardProps) => {
             <ExternalLink className="w-4 h-4 mr-2" />
             Read More
           </Button>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={handleBookmark}
-          >
-            <BookmarkPlus className="w-4 h-4" />
-          </Button>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={handleShare}
-          >
-            <Share2 className="w-4 h-4" />
-          </Button>
+          <BookmarkButton 
+            articleId={articleId}
+            articleData={articleData}
+          />
+          <ShareButton 
+            title={article.title}
+            text={article.description}
+            url={article.url}
+          />
         </div>
       </CardContent>
     </Card>
