@@ -29,6 +29,7 @@ import Bookmarks from "./pages/Bookmarks";
 import ProfileSettings from "./pages/ProfileSettings";
 import UserSubmissions from "./pages/UserSubmissions";
 import Notifications from "./pages/Notifications";
+import NewsAPI from "./pages/NewsAPI";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/fact-check" element={<FactCheck />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/news-api" element={<NewsAPI />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

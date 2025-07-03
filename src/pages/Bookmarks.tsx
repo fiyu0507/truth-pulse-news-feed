@@ -7,61 +7,59 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { Search, Filter, BookmarkIcon, Share2, ExternalLink, X, Calendar } from 'lucide-react';
+import { Search, Filter, BookmarkIcon, Share2, ExternalLink, X, Calendar, Loader2 } from 'lucide-react';
+import { useBookmarks } from '@/hooks/useBookmarks';
 
 const Bookmarks = () => {
+  const { bookmarks, loading, error, removeBookmark } = useBookmarks();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const bookmarkedArticles = [
-    {
-      id: 1,
-      title: "City Council Approves New Housing Development",
-      summary: "The controversial downtown development project gets green light after months of debate.",
-      imageUrl: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      source: "SF Chronicle",
-      savedDate: "2024-01-15",
-      category: "Local Politics",
-      readTime: "5 min read"
-    },
-    {
-      id: 2,
-      title: "Local Business Recovery Shows Promise",
-      summary: "Recent data shows local businesses are recovering faster than expected, with foot traffic up 25%.",
-      imageUrl: "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      source: "Business Journal",
-      savedDate: "2024-01-12",
-      category: "Business",
-      readTime: "3 min read"
-    },
-    {
-      id: 3,
-      title: "Climate Action Plan Faces Budget Constraints",
-      summary: "Environmental groups push back against proposed cuts to sustainability initiatives.",
-      imageUrl: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      source: "Environmental Times",
-      savedDate: "2024-01-10",
-      category: "Environment",
-      readTime: "7 min read"
-    }
-  ];
-
   const categories = ['all', 'Local Politics', 'Business', 'Environment', 'Education'];
 
-  const filteredArticles = bookmarkedArticles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         article.summary.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = selectedFilter === 'all' || article.category === selectedFilter;
+  const filteredBookmarks = bookmarks.filter(bookmark => {
+    const matchesSearch = bookmark.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         bookmark.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = selectedFilter === 'all' || bookmark.category === selectedFilter;
     return matchesSearch && matchesFilter;
   });
 
-  const handleRemoveBookmark = (id: number) => {
-    console.log('Removing bookmark:', id);
+  const handleRemoveBookmark = async (bookmarkId: number) => {
+    await removeBookmark(bookmarkId);
   };
 
-  const handleShare = (article: any) => {
-    console.log('Sharing article:', article.title);
+  const handleShare = (bookmark: any) => {
+    if (navigator.share) {
+      navigator.share({
+        title: bookmark.title,
+        text: bookmark.description,
+        url: bookmark.url
+      });
+    } else {
+      navigator.clipboard.writeText(bookmark.url || '');
+    }
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navigation />
+        <div className="pt-16">
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <Card className="text-center py-8">
+              <CardContent>
+                <p className="text-red-600 mb-4">{error}</p>
+                <Button onClick={() => window.location.reload()} variant="outline">
+                  Try Again
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -117,22 +115,29 @@ const Bookmarks = () => {
             </CardContent>
           </Card>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-800" />
+            </div>
+          )}
+
           {/* Articles Grid */}
-          {filteredArticles.length > 0 ? (
+          {!loading && filteredBookmarks.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredArticles.map((article) => (
-                <Card key={article.id} className="hover:shadow-lg transition-shadow group">
+              {filteredBookmarks.map((bookmark) => (
+                <Card key={bookmark.bookmark_id} className="hover:shadow-lg transition-shadow group">
                   <div className="relative">
                     <img
-                      src={article.imageUrl}
-                      alt={article.title}
+                      src={bookmark.imageUrl || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'}
+                      alt={bookmark.title}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                     <Button
                       size="sm"
                       variant="destructive"
                       className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleRemoveBookmark(article.id)}
+                      onClick={() => handleRemoveBookmark(bookmark.bookmark_id)}
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -140,32 +145,36 @@ const Bookmarks = () => {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <Badge variant="outline" className="text-xs">
-                        {article.category}
+                        {bookmark.category || 'General'}
                       </Badge>
                       <div className="flex items-center text-xs text-gray-500">
                         <Calendar className="w-3 h-3 mr-1" />
-                        {new Date(article.savedDate).toLocaleDateString()}
+                        {new Date(bookmark.saved_at).toLocaleDateString()}
                       </div>
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {article.title}
+                      {bookmark.title || 'Untitled Article'}
                     </h3>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {article.summary}
+                      {bookmark.description || 'No description available'}
                     </p>
                     <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                      <span>{article.source}</span>
-                      <span>{article.readTime}</span>
+                      <span>{bookmark.source || 'Unknown Source'}</span>
+                      <span>3 min read</span>
                     </div>
                     <div className="flex space-x-2">
-                      <Button size="sm" className="flex-1">
+                      <Button 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => window.open(bookmark.url || '#', '_blank')}
+                      >
                         <ExternalLink className="w-4 h-4 mr-2" />
                         Read
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleShare(article)}
+                        onClick={() => handleShare(bookmark)}
                       >
                         <Share2 className="w-4 h-4" />
                       </Button>
@@ -174,7 +183,10 @@ const Bookmarks = () => {
                 </Card>
               ))}
             </div>
-          ) : (
+          )}
+
+          {/* Empty State */}
+          {!loading && filteredBookmarks.length === 0 && (
             <Card className="text-center py-12">
               <CardContent>
                 <BookmarkIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -185,7 +197,7 @@ const Bookmarks = () => {
                     : "Start bookmarking articles to see them here"}
                 </p>
                 <Button asChild>
-                  <Link to="/">Browse News</Link>
+                  <Link to="/news-api">Browse News</Link>
                 </Button>
               </CardContent>
             </Card>

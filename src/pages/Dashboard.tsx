@@ -1,56 +1,20 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookmarkIcon, Bell, Settings, Edit, TrendingUp, MapPin, Clock, User } from 'lucide-react';
+import { BookmarkIcon, Bell, Settings, Edit, TrendingUp, MapPin, Clock, User, Loader2 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { NewsCard } from '@/components/NewsCard';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { useUserStats } from '@/hooks/useUserStats';
 
 const Dashboard = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
+  const { stats, loading: statsLoading, error: statsError } = useUserStats();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [bookmarksCount, setBookmarksCount] = useState(0);
-  const [notificationsCount, setNotificationsCount] = useState(0);
-  const [submissionsCount, setSubmissionsCount] = useState(0);
-
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      if (!user) return;
-
-      try {
-        // Fetch bookmarks count
-        const { count: bookmarks } = await supabase
-          .from('bookmarks')
-          .select('*', { count: 'exact', head: true })
-          .eq('auth_user_id', user.id);
-
-        // Fetch notifications count
-        const { count: notifications } = await supabase
-          .from('notifications')
-          .select('*', { count: 'exact', head: true })
-          .eq('auth_user_id', user.id)
-          .eq('is_read', false);
-
-        // Fetch submissions count
-        const { count: submissions } = await supabase
-          .from('submissions')
-          .select('*', { count: 'exact', head: true })
-          .eq('auth_user_id', user.id);
-
-        setBookmarksCount(bookmarks || 0);
-        setNotificationsCount(notifications || 0);
-        setSubmissionsCount(submissions || 0);
-      } catch (error) {
-        console.error('Error fetching user stats:', error);
-      }
-    };
-
-    fetchUserStats();
-  }, [user]);
 
   const topPicks = [
     {
@@ -117,10 +81,31 @@ const Dashboard = () => {
     { id: 'education', name: 'Education', count: 6 }
   ];
 
-  if (loading) {
+  // Show loading state
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-800"></div>
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-800" />
+          <span className="text-lg text-gray-600">Loading dashboard...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if no user
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="max-w-md mx-auto text-center">
+          <CardContent className="pt-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
+            <p className="text-gray-600 mb-4">Please sign in to view your dashboard.</p>
+            <Button asChild>
+              <Link to="/signin">Sign In</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -158,8 +143,8 @@ const Dashboard = () => {
                   <Link to="/notifications">
                     <Bell className="w-4 h-4 mr-2" />
                     Notifications
-                    {notificationsCount > 0 && (
-                      <Badge variant="secondary" className="ml-2">{notificationsCount}</Badge>
+                    {stats.notificationsCount > 0 && (
+                      <Badge variant="secondary" className="ml-2">{stats.notificationsCount}</Badge>
                     )}
                   </Link>
                 </Button>
@@ -173,7 +158,11 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600">Saved Articles</p>
-                      <p className="text-2xl font-bold text-blue-800">{bookmarksCount}</p>
+                      {statsLoading ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-blue-800" />
+                      ) : (
+                        <p className="text-2xl font-bold text-blue-800">{stats.bookmarksCount}</p>
+                      )}
                     </div>
                     <BookmarkIcon className="w-8 h-8 text-blue-800" />
                   </div>
@@ -195,7 +184,11 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600">Notifications</p>
-                      <p className="text-2xl font-bold text-green-600">{notificationsCount}</p>
+                      {statsLoading ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-green-600" />
+                      ) : (
+                        <p className="text-2xl font-bold text-green-600">{stats.notificationsCount}</p>
+                      )}
                     </div>
                     <Bell className="w-8 h-8 text-green-600" />
                   </div>
@@ -206,13 +199,28 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600">Submissions</p>
-                      <p className="text-2xl font-bold text-purple-600">{submissionsCount}</p>
+                      {statsLoading ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                      ) : (
+                        <p className="text-2xl font-bold text-purple-600">{stats.submissionsCount}</p>
+                      )}
                     </div>
                     <Edit className="w-8 h-8 text-purple-600" />
                   </div>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Error Message for Stats */}
+            {statsError && (
+              <Card className="mb-4 border-yellow-200 bg-yellow-50">
+                <CardContent className="p-4">
+                  <p className="text-yellow-800 text-sm">
+                    ⚠️ {statsError}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -328,7 +336,6 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Recent Alerts */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold text-gray-900 font-['Poppins']">
