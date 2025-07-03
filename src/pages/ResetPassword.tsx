@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,10 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const navigate = useNavigate();
+  const { updatePassword } = useAuth();
+  const { toast } = useToast();
   
   const [formData, setFormData] = useState({
     password: '',
@@ -21,6 +25,7 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const passwordStrength = (password: string) => {
     const checks = {
@@ -46,7 +51,7 @@ const ResetPassword = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const newErrors: Record<string, string> = {};
@@ -60,9 +65,23 @@ const ResetPassword = () => {
     setErrors(newErrors);
     
     if (Object.keys(newErrors).length === 0) {
-      console.log('Reset password submitted:', { token, password: formData.password });
-      setIsSubmitted(true);
-      // Handle reset password logic here
+      setIsLoading(true);
+      const { error } = await updatePassword(formData.password);
+      
+      if (error) {
+        toast({
+          title: "Update failed",
+          description: error.message || "Failed to update password",
+          variant: "destructive",
+        });
+      } else {
+        setIsSubmitted(true);
+        toast({
+          title: "Password updated",
+          description: "Your password has been successfully updated",
+        });
+      }
+      setIsLoading(false);
     }
   };
 
@@ -96,41 +115,11 @@ const ResetPassword = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild className="w-full bg-blue-800 hover:bg-blue-900 text-white">
-                <Link to="/signin">
-                  Continue to Sign In
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
-        <div className="flex min-h-screen pt-16 items-center justify-center p-8">
-          <Card className="w-full max-w-md shadow-lg">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <X className="w-6 h-6 text-red-600" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900 font-['Poppins']">
-                Invalid Reset Link
-              </CardTitle>
-              <CardDescription className="text-gray-600 font-['Open_Sans']">
-                This password reset link is invalid or has expired
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild className="w-full" variant="outline">
-                <Link to="/forgot-password">
-                  Request New Reset Link
-                </Link>
+              <Button 
+                onClick={() => navigate('/signin')}
+                className="w-full bg-blue-800 hover:bg-blue-900 text-white"
+              >
+                Continue to Sign In
               </Button>
             </CardContent>
           </Card>
@@ -167,6 +156,7 @@ const ResetPassword = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     className={errors.password ? 'border-red-500' : ''}
+                    disabled={isLoading}
                   />
                   <Button
                     type="button"
@@ -174,6 +164,7 @@ const ResetPassword = () => {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -228,6 +219,7 @@ const ResetPassword = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className={errors.confirmPassword ? 'border-red-500' : ''}
+                    disabled={isLoading}
                   />
                   <Button
                     type="button"
@@ -235,6 +227,7 @@ const ResetPassword = () => {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isLoading}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -258,8 +251,9 @@ const ResetPassword = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-blue-800 hover:bg-blue-900 text-white"
+                disabled={isLoading}
               >
-                Update Password
+                {isLoading ? 'Updating...' : 'Update Password'}
               </Button>
             </form>
           </CardContent>

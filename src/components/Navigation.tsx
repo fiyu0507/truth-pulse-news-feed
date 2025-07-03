@@ -1,14 +1,23 @@
 
 import React, { useState } from 'react';
-import { Search, Menu, X, MapPin } from 'lucide-react';
+import { Search, Menu, X, MapPin, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +25,11 @@ export const Navigation = () => {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
       setSearchQuery('');
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   return (
@@ -56,18 +70,45 @@ export const Navigation = () => {
               <MapPin className="w-4 h-4" />
               <span>San Francisco, CA</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Link to="/signin">
-                <Button variant="ghost" className="text-gray-700 hover:text-blue-800">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button className="bg-blue-800 hover:bg-blue-900 text-white">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">{user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile-settings">Profile Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/bookmarks">Bookmarks</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link to="/signin">
+                  <Button variant="ghost" className="text-gray-700 hover:text-blue-800">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-blue-800 hover:bg-blue-900 text-white">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -107,16 +148,43 @@ export const Navigation = () => {
                 <Link to="/contact" className="text-gray-700 hover:text-blue-800 font-medium py-2" onClick={() => setIsMenuOpen(false)}>Contact</Link>
               </div>
               <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-                <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-blue-800">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full bg-blue-800 hover:bg-blue-900 text-white">
-                    Sign Up
-                  </Button>
-                </Link>
+                {user ? (
+                  <>
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-blue-800">
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Link to="/profile-settings" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-blue-800">
+                        Profile Settings
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-gray-700 hover:text-blue-800"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-blue-800">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                      <Button className="w-full bg-blue-800 hover:bg-blue-900 text-white">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

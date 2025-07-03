@@ -8,13 +8,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, ArrowLeft } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const ForgotPassword = () => {
+  const { resetPassword } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email.trim()) {
@@ -22,9 +27,19 @@ const ForgotPassword = () => {
       return;
     }
     
-    console.log('Reset password for:', email);
-    setIsSubmitted(true);
-    // Handle forgot password logic here
+    setIsLoading(true);
+    const { error } = await resetPassword(email);
+    
+    if (error) {
+      toast({
+        title: "Reset failed",
+        description: error.message || "Failed to send reset email",
+        variant: "destructive",
+      });
+    } else {
+      setIsSubmitted(true);
+    }
+    setIsLoading(false);
   };
 
   if (isSubmitted) {
@@ -97,14 +112,19 @@ const ForgotPassword = () => {
                     if (error) setError('');
                   }}
                   className={error ? 'border-red-500' : ''}
+                  disabled={isLoading}
                 />
                 {error && (
                   <p className="text-sm text-red-500">{error}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full bg-blue-800 hover:bg-blue-900 text-white">
-                Send Reset Instructions
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-800 hover:bg-blue-900 text-white"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Sending...' : 'Send Reset Instructions'}
               </Button>
 
               <Button asChild className="w-full" variant="outline">
