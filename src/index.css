@@ -36,6 +36,14 @@
 
     --radius: 0.5rem;
 
+    /* News platform colors */
+    --news-primary: 210 61% 25%; /* BBC-style deep blue #00457C */
+    --news-success: 134 61% 41%; /* Success green #28A745 */
+    --news-error: 354 70% 54%; /* Error red #D62828 */
+    --news-warning: 45 93% 47%; /* Warning yellow #FFC107 */
+    --news-delete-bg: 0 100% 98%; /* Light red background #FFF5F5 */
+    --news-delete-border: 0 56% 91%; /* Red border #F5C6CB */
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;

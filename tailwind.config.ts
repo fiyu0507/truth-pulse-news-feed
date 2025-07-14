@@ -67,7 +67,13 @@ export default {
 				'news-blue': '#1A3C74',
 				'news-orange': '#FF8C42',
 				'news-charcoal': '#333333',
-				'news-gray': '#F5F6F8'
+				'news-gray': '#F5F6F8',
+				'news-primary': 'hsl(var(--news-primary))',
+				'news-success': 'hsl(var(--news-success))',
+				'news-error': 'hsl(var(--news-error))',
+				'news-warning': 'hsl(var(--news-warning))',
+				'news-delete-bg': 'hsl(var(--news-delete-bg))',
+				'news-delete-border': 'hsl(var(--news-delete-border))'
 			},
 			fontFamily: {
 				'heading': ['Poppins', 'sans-serif'],

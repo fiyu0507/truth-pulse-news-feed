@@ -27,6 +27,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import Bookmarks from "./pages/Bookmarks";
 import ProfileSettings from "./pages/ProfileSettings";
+import UserProfile from "./pages/UserProfile";
 import UserSubmissions from "./pages/UserSubmissions";
 import Notifications from "./pages/Notifications";
 import NewsAPI from "./pages/NewsAPI";
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
             <Route path="/profile-settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
             <Route path="/user-submissions" element={<ProtectedRoute><UserSubmissions /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
