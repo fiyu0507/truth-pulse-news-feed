@@ -22,7 +22,7 @@ interface UseNewsAPIProps {
   pageSize?: number;
 }
 
-const NEWS_API_KEY = 'pub_61793e15d9a1997b8c0e92dd6b99b8ae2d51c'; // newsdata.io API key
+const NEWS_API_KEY = 'pub_4c050bd61bbc444c8f2132c3a978b799'; // newsdata.io API key
 const NEWS_API_BASE_URL = 'https://newsdata.io/api/1';
 
 export const useNewsAPI = ({ category = 'general', query, pageSize = 20 }: UseNewsAPIProps = {}) => {
