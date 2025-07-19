@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import FactCheck from "./pages/FactCheck";
 import SearchResults from "./pages/SearchResults";
 import NewsDetail from "./pages/NewsDetail";
+import NewsDetailView from "./pages/NewsDetailView";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/fact-check" element={<FactCheck />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/article/:id" element={<NewsDetailView />} />
             <Route path="/news-api" element={<NewsAPI />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />} />
