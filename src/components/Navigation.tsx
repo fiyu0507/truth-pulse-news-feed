@@ -66,10 +66,6 @@ export const Navigation = () => {
                 className="pl-10 w-64 border-gray-300 focus:border-blue-800 focus:ring-blue-800"
               />
             </form>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <MapPin className="w-4 h-4" />
-              <span>San Francisco, CA</span>
-            </div>
             
             {user ? (
               <DropdownMenu>
@@ -137,10 +133,6 @@ export const Navigation = () => {
                   className="pl-10 w-full border-gray-300"
                 />
               </form>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <MapPin className="w-4 h-4" />
-                <span>San Francisco, CA</span>
-              </div>
               <div className="flex flex-col space-y-2">
                 <Link to="/" className="text-gray-700 hover:text-blue-800 font-medium py-2" onClick={() => setIsMenuOpen(false)}>Home</Link>
                 <Link to="/fact-check" className="text-gray-700 hover:text-blue-800 font-medium py-2" onClick={() => setIsMenuOpen(false)}>Fact Check</Link>

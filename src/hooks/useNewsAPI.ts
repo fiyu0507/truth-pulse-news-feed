@@ -22,8 +22,8 @@ interface UseNewsAPIProps {
   pageSize?: number;
 }
 
-const NEWS_API_KEY = 'pub_4c050bd61bbc444c8f2132c3a978b799'; // newsdata.io API key
-const NEWS_API_BASE_URL = 'https://newsdata.io/api/1';
+const NEWS_API_KEY = 'ce5fcfde8cf94511a8ebe7a98c371fb5'; // NewsAPI.org API key
+const NEWS_API_BASE_URL = 'https://newsapi.org/v2';
 
 export const useNewsAPI = ({ category = 'general', query, pageSize = 20 }: UseNewsAPIProps = {}) => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -36,10 +36,10 @@ export const useNewsAPI = ({ category = 'general', query, pageSize = 20 }: UseNe
 
     try {
       let params = new URLSearchParams({
-        apikey: NEWS_API_KEY,
+        apiKey: NEWS_API_KEY,
         language: 'en',
         country: 'us',
-        size: pageSize.toString(),
+        pageSize: pageSize.toString(),
       });
 
       if (query) {
@@ -50,7 +50,7 @@ export const useNewsAPI = ({ category = 'general', query, pageSize = 20 }: UseNe
         params.append('category', category);
       }
 
-      const endpoint = `${NEWS_API_BASE_URL}/news?${params}`;
+      const endpoint = `${NEWS_API_BASE_URL}/everything?${params}`;
       console.log('Fetching news from:', endpoint);
 
       const response = await fetch(endpoint);
@@ -65,18 +65,18 @@ export const useNewsAPI = ({ category = 'general', query, pageSize = 20 }: UseNe
         throw new Error(data.message || 'Failed to fetch news');
       }
 
-      const processedArticles: NewsArticle[] = (data.results || [])
-        .filter((article: any) => article.title && article.description && article.image_url)
+      const processedArticles: NewsArticle[] = (data.articles || [])
+        .filter((article: any) => article.title && article.description && article.urlToImage)
         .map((article: any, index: number) => ({
           id: `${Date.now()}-${index}`,
           title: article.title,
           description: article.description,
-          url: article.link,
-          urlToImage: article.image_url,
-          publishedAt: article.pubDate,
+          url: article.url,
+          urlToImage: article.urlToImage,
+          publishedAt: article.publishedAt,
           source: {
-            id: article.source_id || 'unknown',
-            name: article.source_name || 'Unknown Source'
+            id: article.source?.id || 'unknown',
+            name: article.source?.name || 'Unknown Source'
           },
           category: category,
           content: article.content || article.description
