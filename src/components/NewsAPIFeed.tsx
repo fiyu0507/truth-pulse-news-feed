@@ -1,27 +1,54 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, RefreshCw } from 'lucide-react';
-import { useNewsAPI } from '@/hooks/useNewsAPI';
-import { NewsAPICard } from './NewsAPICard';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, RefreshCw } from "lucide-react";
+import { useNewsAPI } from "@/hooks/useNewsAPI";
+import { NewsAPICard } from "./NewsAPICard";
 
 const categories = [
-  { id: 'general', name: 'All', color: 'bg-gray-100 text-gray-800' },
-  { id: 'politics', name: 'Politics', color: 'bg-blue-100 text-blue-800' },
-  { id: 'business', name: 'Business', color: 'bg-green-100 text-green-800' },
-  { id: 'technology', name: 'Technology', color: 'bg-purple-100 text-purple-800' },
-  { id: 'education', name: 'Education', color: 'bg-orange-100 text-orange-800' },
-  { id: 'health', name: 'Health', color: 'bg-red-100 text-red-800' }
+  { id: "general", name: "All", color: "bg-gray-100 text-gray-800" },
+  { id: "politics", name: "Politics", color: "bg-blue-100 text-blue-800" },
+  { id: "business", name: "Business", color: "bg-green-100 text-green-800" },
+  {
+    id: "technology",
+    name: "Technology",
+    color: "bg-purple-100 text-purple-800",
+  },
+  { id: "sports", name: "Sports", color: "bg-orange-100 text-orange-800" },
+  {
+    id: "entertainment",
+    name: "Entertainment",
+    color: "bg-pink-100 text-pink-800",
+  },
+  { id: "health", name: "Health", color: "bg-red-100 text-red-800" },
 ];
 
 export const NewsAPIFeed = () => {
-  const [selectedCategory, setSelectedCategory] = useState('general');
-  const { articles, loading, error, refetch } = useNewsAPI({ 
+  const [selectedCategory, setSelectedCategory] = useState("general");
+  const [searchQuery, setSearchQuery] = useState("");
+  const { articles, loading, error, refetch } = useNewsAPI({
     category: selectedCategory,
-    pageSize: 12 
+    query: searchQuery,
+    pageSize: 12,
   });
+
+  const handleTopicClick = (topic: { title: string; category?: string }) => {
+    if (topic.category) {
+      setSelectedCategory(topic.category);
+      setSearchQuery("");
+    } else {
+      setSearchQuery(topic.title);
+      setSelectedCategory("general");
+    }
+    // Scroll to news section after selection
+    setTimeout(() => {
+      const newsSection = document.getElementById("news-section");
+      if (newsSection) {
+        newsSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
 
   if (error) {
     return (
@@ -38,7 +65,7 @@ export const NewsAPIFeed = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="news-section">
       {/* Category Filter */}
       <Card>
         <CardHeader>
@@ -49,13 +76,18 @@ export const NewsAPIFeed = () => {
             {categories.map((category) => (
               <Badge
                 key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
+                variant={
+                  selectedCategory === category.id ? "default" : "outline"
+                }
                 className={`cursor-pointer ${
-                  selectedCategory === category.id 
-                    ? 'bg-blue-800 text-white' 
-                    : 'hover:bg-gray-100'
+                  selectedCategory === category.id
+                    ? "bg-blue-800 text-white"
+                    : "hover:bg-gray-100"
                 }`}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => {
+                  setSelectedCategory(category.id);
+                  setSearchQuery("");
+                }}
               >
                 {category.name}
               </Badge>
@@ -84,7 +116,12 @@ export const NewsAPIFeed = () => {
       {!loading && articles.length === 0 && (
         <Card className="text-center py-12">
           <CardContent>
-            <p className="text-gray-500 mb-4">No articles found for this category</p>
+            <p className="text-gray-500 mb-4">
+              No articles found{" "}
+              {searchQuery
+                ? `for "${searchQuery}"`
+                : `in ${selectedCategory} category`}
+            </p>
             <Button onClick={() => refetch()} variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh

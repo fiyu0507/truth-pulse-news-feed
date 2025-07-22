@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -32,6 +31,7 @@ import UserProfile from "./pages/UserProfile";
 import UserSubmissions from "./pages/UserSubmissions";
 import Notifications from "./pages/Notifications";
 import NewsAPI from "./pages/NewsAPI";
+import { ArticleDetailPage } from "./components/ArticleDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -49,25 +49,116 @@ const App = () => (
             <Route path="/fact-check" element={<FactCheck />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/news/:id" element={<NewsDetail />} />
-            <Route path="/article/:id" element={<NewsDetailView />} />
+            <Route path="/article/:id" element={<ArticleDetailPage />} />
             <Route path="/news-api" element={<NewsAPI />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-            <Route path="/profile-settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
-            <Route path="/user-submissions" element={<ProtectedRoute><UserSubmissions /></ProtectedRoute>} />
-            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-            <Route path="/claim-submission" element={<ProtectedRoute><ClaimSubmission /></ProtectedRoute>} />
-            <Route path="/fact-check-dashboard" element={<ProtectedRoute><FactCheckDashboard /></ProtectedRoute>} />
-            <Route path="/fact-check-report/:id" element={<ProtectedRoute><FactCheckReport /></ProtectedRoute>} />
-            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/sources" element={<ProtectedRoute><AdminSources /></ProtectedRoute>} />
-            <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
-            <Route path="/admin/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/bookmarks"
+              element={
+                <ProtectedRoute>
+                  <Bookmarks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile-settings"
+              element={
+                <ProtectedRoute>
+                  <ProfileSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-submissions"
+              element={
+                <ProtectedRoute>
+                  <UserSubmissions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/claim-submission"
+              element={
+                <ProtectedRoute>
+                  <ClaimSubmission />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/fact-check-dashboard"
+              element={
+                <ProtectedRoute>
+                  <FactCheckDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/fact-check-report/:id"
+              element={
+                <ProtectedRoute>
+                  <FactCheckReport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/sources"
+              element={
+                <ProtectedRoute>
+                  <AdminSources />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute>
+                  <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/analytics"
+              element={
+                <ProtectedRoute>
+                  <AdminAnalytics />
+                </ProtectedRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
