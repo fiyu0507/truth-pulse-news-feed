@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { CheckCircle, XCircle, AlertTriangle, Search, Plus, BarChart3 } from 'lucide-react';
@@ -72,6 +72,20 @@ const getStatusColor = (status: string) => {
 };
 
 const FactCheck = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return factCheckItems;
+    
+    const query = searchQuery.toLowerCase();
+    return factCheckItems.filter(item => 
+      item.claim.toLowerCase().includes(query) ||
+      item.verdict.toLowerCase().includes(query) ||
+      item.source.toLowerCase().includes(query) ||
+      item.summary.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -120,14 +134,28 @@ const FactCheck = () => {
                 type="text" 
                 placeholder="Search fact checks..." 
                 className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button className="bg-blue-800 hover:bg-blue-900">Search</Button>
+            <Button 
+              className="bg-blue-800 hover:bg-blue-900"
+              onClick={() => setSearchQuery('')}
+            >
+              Clear
+            </Button>
           </div>
         </div>
 
         <div className="space-y-6">
-          {factCheckItems.map((item, index) => (
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-12">
+              <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-600 mb-2">No results found</h3>
+              <p className="text-gray-500">Try adjusting your search terms</p>
+            </div>
+          ) : (
+            filteredItems.map((item, index) => (
             <article key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
@@ -147,7 +175,8 @@ const FactCheck = () => {
               </div>
               <p className="text-gray-600">{item.summary}</p>
             </article>
-          ))}
+            ))
+          )}
         </div>
 
         <div className="bg-blue-50 rounded-lg p-6 mt-12">
@@ -155,7 +184,9 @@ const FactCheck = () => {
           <p className="text-blue-800 mb-4">
             Have you seen a claim that needs verification? Send it to our fact-checking team.
           </p>
-          <Button className="bg-blue-800 hover:bg-blue-900">Submit Claim</Button>
+          <Link to="/claim-submission">
+            <Button className="bg-blue-800 hover:bg-blue-900">Submit Claim</Button>
+          </Link>
         </div>
       </main>
       <Footer />
