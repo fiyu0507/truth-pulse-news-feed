@@ -11,8 +11,8 @@ import { Footer } from '@/components/Footer';
 const Index = () => {
   const [selectedTopic, setSelectedTopic] = useState<string>('');
 
-  const handleTopicClick = (topic: string) => {
-    setSelectedTopic(topic);
+  const handleTopicClick = (topic: { title: string; category?: string }) => {
+    setSelectedTopic(topic.title);
   };
 
   return (

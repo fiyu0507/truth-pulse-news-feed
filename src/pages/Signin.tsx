@@ -26,12 +26,7 @@ const Signin = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect if already signed in
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
+  // Note: Removed auto-redirect to let users stay on current page
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,7 +76,6 @@ const Signin = () => {
           title: "Welcome back!",
           description: "You have successfully signed in",
         });
-        navigate('/dashboard');
       }
       setIsLoading(false);
     }
